@@ -1,0 +1,7 @@
+dist/
+node_modules/
+*.private.json
+*backup*.json
+*.pdf
+*.xlsx
+.DS_Store
