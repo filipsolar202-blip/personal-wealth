@@ -38,9 +38,13 @@ npm test
 npm run build
 ```
 
-GitHub Pages publikuje pouze povolené soubory z `dist/`, nikdy celý pracovní adresář. Workflow je v `.github/workflows/pages.yml`. Nastavení repozitáře: **Settings → Pages → Source → GitHub Actions**. Po nahrání větve `main` se aplikace nasadí. Lze spustit také ručně nebo tagem `v1.0.0`.
+GitHub Pages publikuje pouze povolené soubory z `dist/`, nikdy celý pracovní adresář. Workflow je v `.github/workflows/pages.yml`. Nastavení repozitáře: **Settings → Pages → Source → GitHub Actions**. Po nahrání větve `main` se aplikace nasadí. Lze spustit také ručně z větve `main`. Tagy slouží k označení vydání; nasazení používá povolenou větev `main`.
 
-Repozitář je připraven lokálně; skutečné nasazení vyžaduje dostupný cílový GitHub repozitář a platné přihlášení. Tato dodávka sama nepotvrzuje živou GitHub Pages adresu.
+Repozitář: https://github.com/filipsolar202-blip/personal-wealth
+
+Aplikace: https://filipsolar202-blip.github.io/personal-wealth/
+
+Vydání: https://github.com/filipsolar202-blip/personal-wealth/releases/tag/v1.0.0
 
 ## Vydávání verzí
 
