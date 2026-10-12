@@ -1,11 +1,12 @@
-# Validation · 1.0.0
+# Validation · 1.1.0
 
-Verified locally on 2026-10-11.
+Verified on 2026-10-12.
 
-- 10 Node tests: own-account matching, manual overrides, intermediary/split movements, ambiguous matches, date boundaries, aggregation, unknown balances, categorization, deduplication, schema rejection and version consistency.
-- Headless Google Chrome: clean start → private JSON preview/restore → dashboard; create bank account; create/edit transaction; internal override; reload persistence; edit asset; create category rule; add historical snapshot; PDF queue; backup download; 390px mobile layout without page overflow.
-- Desktop 1440px and mobile 390px screenshots visually inspected.
-- Both original statements reconciled independently to credits, debits and closing balances during private conversion. 87 transactions (74 + 13). No account numbers or amounts from the original statements are stored in this public repository.
-- Public build created from an explicit file allowlist. No external dependencies required for app execution or domain tests.
+- 27 Node tests cover finance logic and import behavior: bank reconciliation, amount/date errors, unsupported currency, fees, Excel history/nulls, merge ordering, duplicates, manual edits, old statement protection, legacy source IDs and version consistency.
+- Actual supplied files imported through browser file controls: Excel → 22 positions and 15 dated snapshots; Air Bank → 74 transactions; ČSOB → 13 transactions. Both statements match opening + income − expenses = closing balance.
+- All 87 parsed transaction amounts and posting dates also match the independently extracted 1.0 bootstrap. Import into existing 1.0 data adds no duplicates; original state, IDs and edits remain usable.
+- Chrome end-to-end test exercised Excel preview and commit, both PDFs selected together, own-account confirmation, balance updates, manually edited transaction re-import, repeated Excel import, invalid PDF rollback, reload persistence and 390px viewport overflow checks. Repeated on standalone file:// HTML with embedded libraries.
+- No requests to external hosts during local file import tests. Public assets include no private source documents or financial account identifiers.
+- Desktop import and preview screenshots visually inspected. Mobile viewport checks include form usability and contained horizontal table scrolling.
 
-GitHub Actions deployment itself has not been executed for this local release. Generic PDF parsing, OCR, foreign currency accounting and CRM sync are explicitly outside implemented v1 functionality.
+Supported: text-based CZK Air Bank and ČSOB templates represented by the supplied files, and the supplied Excel portfolio layout. OCR, other bank templates, FX accounting and CRM sync are not implemented.

@@ -4,7 +4,9 @@
 
 - `src/domain.js`: pure money aggregation (integer CZK minor units), validation, category inference, account identity, transfer derivation, deduplication.
 - `src/app.js`: Czech UI and dialogs, immutable edit-before-commit, localStorage persistence, JSON review/restore. Storage is written before replacing live state; failures preserve existing in-memory data and report the error. Corrupt storage is not overwritten automatically.
-- `src/importers.js`: adapter registry and PDF staging. Adapters cannot write state. Future flow: extract text locally → detect bank → normalize draft records → validate dates/amounts/currency → reconcile opening + credits − debits with closing balance → human review → commit with deduplication. OCR and encrypted/unsupported PDFs must produce explicit review/errors.
+- `src/pdf-reader.js`: local PDF.js text extraction with coordinates and worker. Browser loads vendored modules; standalone release embeds those modules as Blob URLs. No document upload. Password-protected, invalid, scanned and over-limit PDFs fail explicitly.
+- `src/importers.js`: Air Bank / ČSOB spatial parsers, SheetJS portfolio parser, pure merge functions. Pipeline: local extraction → bank/template detection → integer-money draft → source reconciliation → preview → validated atomic commit. A statement must match credits, debits and closing balance; ČSOB item count is checked as well. Fees attached to payments get a separate row, preserving gross income/expenses.
+- `src/source-ui.js`: multi-file PDF queue, Excel preview, explicit commit, ownership confirmation, balance-update and merge choices. Pending drafts live only in memory; failed/cancelled imports never mutate stored state. Legacy metadata-only PDF rows are replaced after a successful re-upload.
 - `scripts/build.cjs`: public asset allowlist.
 
 ## Data schema 1
@@ -22,6 +24,16 @@
 `imports`: audit metadata, source reconciliation totals and pipeline state. PDFs are not embedded or uploaded.
 
 `issues`: source caveats visible in UI. The private bootstrap retains provenance in notes and source fields.
+
+Schema 1 remains compatible with 1.0 backups. Optional account fields `bank`, `aggregate`, `parentAggregateId`, `identityOnly` and record `sourceKey` describe import provenance and prevent double-counting. `imports.status` additionally accepts `portfolio`. Successful commits update `appVersion`; old records are never reset.
+
+## Idempotency and merges
+
+Bank IDs are namespaced by bank, account and bank source ID (ČSOB includes year/month). Legacy v1 records are matched by resolved account plus source ID. Existing transactions, including manually changed dates, values, categories and overrides, remain untouched. Preview reports conflicts. Repeated statements do not reset balances by default; newer balances are always preserved.
+
+Excel identity uses sheet, collection, normalized label and occurrence index; legacy names are matched only when they lack import identity. Default merge adds missing items and dates, preserving existing valuations. Explicit update can replace same/older valuations but never newer ones. Historical records with matching dates are kept unless explicitly updating an Excel-origin snapshot. Empty cells stay null; source totals are compared with item sums and mismatches shown. Unknown years, non-money BJ rows and nonnumeric cells are reported. No arbitrary date correction is applied.
+
+The Air Bank aggregate from the supplied spreadsheet is a valuation group. Statement subaccounts beneath it are excluded from totals regardless of import order. After complete individual balances are available, users can disable the aggregate and include the components.
 
 ## Transfer logic
 

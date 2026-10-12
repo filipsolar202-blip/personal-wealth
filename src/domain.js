@@ -1,6 +1,6 @@
 (function(root){
 'use strict';
-const VERSION='1.0.0';
+const VERSION='1.1.0';
 const categories=['Nezařazeno','Provize','Domácnost','Restaurace a káva','Doprava','Pojištění','Investice','Software','Předplatné','Sport a volný čas','Cestování','Kancelář','Splátky','Ostatní'];
 function empty(){return {schemaVersion:1,appVersion:VERSION,accounts:[],assets:[],liabilities:[],transactions:[],history:[],rules:[],imports:[],issues:[],crm:{enabled:false,externalRefs:[],aumSnapshots:[],expectedCommissions:[]}}}
 function normalize(s){return String(s||'').replace(/\s/g,'').toUpperCase().replace(/^0+(?=\d)/,'')}
@@ -34,7 +34,7 @@ function validate(s){
  for(const t of s.transactions)if(typeof t.counterparty!=='string'||typeof t.category!=='string'||(t.note!==undefined&&typeof t.note!=='string'))throw Error('Neplatný text transakce.');
  for(const a of [...s.assets,...s.liabilities])if(typeof a.kind!=='string')throw Error('Chybí typ položky.');
  for(const h of s.history)if(typeof h.partial!=='boolean')throw Error('Chybí příznak úplnosti historie.');
- for(const i of s.imports){if(!i||typeof i.name!=='string'||!Number.isSafeInteger(i.count)||i.count<0||!['reconciled','needs-adapter'].includes(i.status))throw Error('Neplatný záznam importu.');if(i.status==='reconciled'&&(![i.opening,i.closing,i.income,i.expense].every(Number.isSafeInteger)||i.opening+i.income-i.expense!==i.closing))throw Error('Import nemá platné kontrolní součty.');}
+ for(const i of s.imports){if(!i||typeof i.name!=='string'||!Number.isSafeInteger(i.count)||i.count<0||!['reconciled','needs-adapter','portfolio'].includes(i.status))throw Error('Neplatný záznam importu.');if(i.status==='reconciled'&&(![i.opening,i.closing,i.income,i.expense].every(Number.isSafeInteger)||i.opening+i.income-i.expense!==i.closing))throw Error('Import nemá platné kontrolní součty.');}
  if(s.issues.some(i=>typeof i!=='string'))throw Error('Neplatné poznámky ke zdrojům.');
  return s;
 }
