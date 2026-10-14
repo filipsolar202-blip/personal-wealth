@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.2.0 · 2026-10-14
+
+- Hromadná měsíční aktualizace otevřených aktiv, dluhů a zahrnutých účtů jedním datem, s náhledem součtů a zachováním historie.
+- Výpis se stejným koncovým datem zpřesní účet i v odpovídajícím měsíčním snímku. Dílčí výpisy nepřepisují bankovní souhrny.
+- Graf celkového majetku, dluhů a čistého jmění; přehled změny jmění a měsíční spotřeby.
+- Plánování cílového majetku a zbývající jistiny: potřebné měsíční tempo, vlastní scénář a podmíněný lineární trend z úplných srovnatelných stavů.
+- Možnost uzavřít a znovu otevřít pozici bez smazání historie. Kompaktní řádky transakcí.
+- Zachována kompatibilita záloh a úložiště schématu 1; soukromé údaje nejsou součástí vydání.
+
+
 Semantic Versioning: MAJOR = incompatible data/API changes, MINOR = compatible features, PATCH = fixes. Data schema versions are independent of app versions.
 
 ## [1.1.0] - 2026-10-12

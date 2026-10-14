@@ -1,6 +1,6 @@
 (function(root){
 'use strict';
-const VERSION='1.1.0';
+const VERSION='1.2.0';
 const categories=['Nezařazeno','Provize','Domácnost','Restaurace a káva','Doprava','Pojištění','Investice','Software','Předplatné','Sport a volný čas','Cestování','Kancelář','Splátky','Ostatní'];
 function empty(){return {schemaVersion:1,appVersion:VERSION,accounts:[],assets:[],liabilities:[],transactions:[],history:[],rules:[],imports:[],issues:[],crm:{enabled:false,externalRefs:[],aumSnapshots:[],expectedCommissions:[]}}}
 function normalize(s){return String(s||'').replace(/\s/g,'').toUpperCase().replace(/^0+(?=\d)/,'')}
@@ -19,7 +19,7 @@ function transfers(state){
  for(const [id,r] of result)if(r.pairId&&result.get(r.pairId)&&state.transactions.find(t=>t.id===r.pairId).transferOverride==='auto')result.set(r.pairId,{internal:true,reason:'Spárovaná protistrana vlastního převodu',pairId:id});
  return result;
 }
-function totals(s){const sum=xs=>xs.reduce((n,x)=>n+(x.amount||0),0),acc=s.accounts.filter(a=>a.included);const assets=sum(s.assets)+sum(acc),debt=sum(s.liabilities);return {assets,debt,net:assets-debt,liquidity:sum(acc),investments:sum(s.assets.filter(a=>a.kind==='Investice')),partial:[...s.assets,...s.liabilities,...acc].some(x=>x.amount===null)}}
+function totals(s){const sum=xs=>xs.filter(x=>!x.closed).reduce((n,x)=>n+(x.amount||0),0),acc=s.accounts.filter(a=>a.included);const assets=sum(s.assets)+sum(acc),debt=sum(s.liabilities);return {assets,debt,net:assets-debt,liquidity:sum(acc),investments:sum(s.assets.filter(a=>a.kind==='Investice')),partial:[...s.assets,...s.liabilities,...acc].some(x=>!x.closed&&x.amount===null)}}
 function cashflow(s,month){const flags=transfers(s);let income=0,expense=0,internal=0;for(const t of s.transactions.filter(t=>!month||t.date.startsWith(month))){if(flags.get(t.id).internal){internal++;continue}if(t.amount>0)income+=t.amount;else expense-=t.amount}return {income,expense,net:income-expense,internal}}
 function validate(s){
  if(!s||s.schemaVersion!==1)throw Error('Nepodporovaná verze dat.');
@@ -35,6 +35,9 @@ function validate(s){
  for(const a of [...s.assets,...s.liabilities])if(typeof a.kind!=='string')throw Error('Chybí typ položky.');
  for(const h of s.history)if(typeof h.partial!=='boolean')throw Error('Chybí příznak úplnosti historie.');
  for(const i of s.imports){if(!i||typeof i.name!=='string'||!Number.isSafeInteger(i.count)||i.count<0||!['reconciled','needs-adapter','portfolio'].includes(i.status))throw Error('Neplatný záznam importu.');if(i.status==='reconciled'&&(![i.opening,i.closing,i.income,i.expense].every(Number.isSafeInteger)||i.opening+i.income-i.expense!==i.closing))throw Error('Import nemá platné kontrolní součty.');}
+ for(const x of [...s.assets,...s.liabilities])if(x.closed!==undefined&&typeof x.closed!=='boolean')throw Error('Neplatný stav pozice.');
+ if(s.plan){if(!/^\d{4}-\d{2}-\d{2}$/.test(s.plan.date)||!Number.isFinite(Date.parse(s.plan.date))||new Date(s.plan.date).toISOString().slice(0,10)!==s.plan.date||!['assets','debt','assetMonthly','debtMonthly'].every(k=>Number.isSafeInteger(s.plan[k])&&s.plan[k]>=0))throw Error('Neplatný plán.');}
+ for(const h of s.history.filter(h=>h.source==='monthly')){if(!Array.isArray(h.positions)||!h.positions.length)throw Error('Chybí položky měsíčního stavu.');const seen=new Set();let a=0,d=0;for(const p of h.positions){const key=p.collection+':'+p.id;if(!['assets','liabilities','accounts'].includes(p.collection)||typeof p.id!=='string'||seen.has(key)||(p.amount!==null&&!Number.isSafeInteger(p.amount)))throw Error('Neplatná položka měsíčního stavu.');seen.add(key);if(p.collection==='liabilities')d+=p.amount||0;else a+=p.amount||0}if(h.assets!==a||h.liabilities!==d||h.partial!==h.positions.some(p=>p.amount===null))throw Error('Nesouhlasí součet měsíčního stavu.');}
  if(s.issues.some(i=>typeof i!=='string'))throw Error('Neplatné poznámky ke zdrojům.');
  return s;
 }

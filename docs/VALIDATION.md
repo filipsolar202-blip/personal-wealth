@@ -1,12 +1,10 @@
-# Validation · 1.1.0
+# Validation · 1.2.0
 
-Verified on 2026-10-12.
+Verified on 2026-10-14.
 
-- 27 Node tests cover finance logic and import behavior: bank reconciliation, amount/date errors, unsupported currency, fees, Excel history/nulls, merge ordering, duplicates, manual edits, old statement protection, legacy source IDs and version consistency.
-- Actual supplied files imported through browser file controls: Excel → 22 positions and 15 dated snapshots; Air Bank → 74 transactions; ČSOB → 13 transactions. Both statements match opening + income − expenses = closing balance.
-- All 87 parsed transaction amounts and posting dates also match the independently extracted 1.0 bootstrap. Import into existing 1.0 data adds no duplicates; original state, IDs and edits remain usable.
-- Chrome end-to-end test exercised Excel preview and commit, both PDFs selected together, own-account confirmation, balance updates, manually edited transaction re-import, repeated Excel import, invalid PDF rollback, reload persistence and 390px viewport overflow checks. Repeated on standalone file:// HTML with embedded libraries.
-- No requests to external hosts during local file import tests. Public assets include no private source documents or financial account identifiers.
-- Desktop import and preview screenshots visually inspected. Mobile viewport checks include form usability and contained horizontal table scrolling.
+- 36 automated tests pass: existing reconciliation/import/domain suite plus atomic monthly updates, duplicate dates, backdating, unknown values, closed positions, exact-date bank snapshot updates, five-year target arithmetic, comparable-history safeguards, expense exclusions, backup validation and wealth delta baselines.
+- Isolated Chrome: monthly updates on two dates, historical persistence, saved plan and live scenario, closing/reopening positions, mobile editor, no browser errors.
+- Original private Excel and both PDF statements imported through browser controls: 22 records, 15 history points and 87 transactions. Repeated import preserves manual edits; invalid PDF makes no changes. No external uploads.
+- Desktop dashboard and mobile monthly editor screenshots inspected. Public build contains application assets only, never financial source files.
 
-Supported: text-based CZK Air Bank and ČSOB templates represented by the supplied files, and the supplied Excel portfolio layout. OCR, other bank templates, FX accounting and CRM sync are not implemented.
+Supported import formats remain electronic CZK Air Bank and ČSOB templates represented by supplied files and the supplied portfolio Excel layout. OCR, other banks' PDF templates, FX and CRM sync are not implemented. Trend calculations compare imported records; completeness of account/month coverage must be checked by the user.

@@ -1,10 +1,10 @@
-# Personal Wealth · v1.1.0
+# Personal Wealth · v1.2.0
 
 Statická česká aplikace pro osobní finance, navazující na vzhled FILIP CRM: font Fustat, modrošedé barvy, světlé průsvitné karty, zaoblené ovládání a horní navigace.
 
 ## První spuštění
 
-1. Otevřete [webovou aplikaci](https://filipsolar202-blip.github.io/personal-wealth/) nebo samostatný `Personal-Wealth-v1.1.0.html` z vydání. Pro vývoj modulárního `index.html` použijte lokální HTTP server (`npm start`).
+1. Otevřete [webovou aplikaci](https://filipsolar202-blip.github.io/personal-wealth/) nebo samostatný `Personal-Wealth-v1.2.0.html` z vydání. Pro vývoj modulárního `index.html` použijte lokální HTTP server (`npm start`).
 2. V **Import a zálohy → Načíst Excel** vyberte svůj přehled majetku. Náhled ukáže položky a historii, poté klikněte **Importovat majetek a historii**.
 3. V **Načíst bankovní výpisy** vyberte PDF z Air Bank a/nebo ČSOB. Po kontrole náhledu potvrďte **Importovat výpis**. Lze vybrat oba soubory najednou. Existující výpisy ze staré fronty verze 1.0 nahrajte znovu; původní soubory nebyly v úložišti uchovány.
 4. Pravidelně stahujte **Zálohu dat**. Data jsou uložena v localStorage daného prohlížeče a adresy, nikoli automaticky v souboru na disku.
@@ -48,10 +48,18 @@ Repozitář: https://github.com/filipsolar202-blip/personal-wealth
 
 Aplikace: https://filipsolar202-blip.github.io/personal-wealth/
 
-Vydání: https://github.com/filipsolar202-blip/personal-wealth/releases/tag/v1.1.0
+Vydání: https://github.com/filipsolar202-blip/personal-wealth/releases/tag/v1.2.0
 
 ## Vydávání verzí
 
 Používáme SemVer a samostatnou verzi datového schématu. Před vydáním aktualizujte `VERSION`, `package.json`, `src/domain.js`, odznak `index.html` a `CHANGELOG.md`. Spusťte testy, ověřte import zálohy a aktualizaci existujícího úložiště. Commit označte tagem `vMAJOR.MINOR.PATCH`. Data ukládejte pod stabilním klíčem; při změně schématu přidejte explicitní migraci a test staré zálohy. Neprovádějte tichý reset.
 
 Font Fustat je převzat z místní instalace CRM, licence v `assets/Fustat-OFL.txt`. PDF.js a SheetJS mají licence a původ v `assets/vendor/README.md`. Aplikační kód vznikl pro tento projekt.
+
+## Měsíční postup
+
+1. Na dashboardu zvolte **Aktualizace majetku**, nastavte datum (např. poslední den měsíce) a zkontrolujte hodnoty otevřených pozic, zbývajících dluhů a zahrnutých účtů. Prázdné hodnoty zůstávají neznámé. Uložení vytvoří historický bod.
+2. Nahrajte výpisy. Pokud končí přesně datem snímku, zůstatek příslušného zahrnutého účtu se zpřesní i v historii. Souhrnný účet aktualizujte ručně; dílčí výpis souhrn nepřepisuje.
+3. V **Plánování** zadejte cílový majetek, zbývající dluh a datum. Vlastní měsíční tempo se porovná s tempem potřebným k cíli. Historický odhad vyžaduje alespoň tři úplné měsíční stavy stejného portfolia za dva měsíce.
+
+Vývoj jmění není sám o sobě měřítkem spotřeby: obsahuje přecenění, vklady a splácení jistiny. Spotřeba v dashboardu nezahrnuje interní převody ani kategorie Investice a Splátky; srovnávejte úplně nahrané měsíce stejných účtů. Plán pracuje s nominálními částkami, bez výnosových záruk, úroků a inflace. Změny hodnot se ukládají atomicky do stejného lokálního úložiště jako dříve.

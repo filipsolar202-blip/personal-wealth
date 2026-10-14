@@ -60,3 +60,13 @@ Use idempotent upsert, sync cursors, source timestamps and conflict review. Expe
 ## Release and privacy
 
 App SemVer is independent from data schema. Schema changes require migration functions and fixture tests; unsupported versions fail closed. Deploy updates at the same origin/path and preserve the storage key. Moving between local files, browsers and GitHub Pages requires backup/restore. No private financial data is committed or included in the build.
+
+## Monthly valuation and planning (1.2)
+
+`planning.js` extends the domain API with monthly snapshots, bank snapshot reconciliation, comparable-history linear regression, goal math and expense/wealth deltas. `planning-ui.js` provides the bulk editor, three-series chart, trends and goal screen. Both load before the main UI and are embedded in the standalone build.
+
+Schema 1 adds optional `closed` on holdings, `plan` with target date/assets/debt and monthly asset growth/principal reduction (integer minor units), and `source: monthly` snapshots with immutable per-position copies. Closed positions are excluded from current totals; old snapshots retain them. A monthly update validates all values before mutating a cloned state and replaces a same-date point only after UI confirmation. Backdating before any active position's current date is rejected.
+
+Statement balance confirmation updates the matching account in an exact-date monthly snapshot, independently of whether a newer current balance exists. Unrelated dates/accounts and aggregate bank balances are unchanged. Manually editing snapshot aggregate totals converts it to a manual point (disclosed in the editor), removing detail and forecast eligibility.
+
+Forecast regression uses up to 12 consecutive complete monthly snapshots with identical position membership, at least 3 points over 2 months, and matching current membership. Incomplete current balances disable it. Historical spreadsheet aggregate points are charted but not forecast inputs. All projections are nominal, linear, and are clearly distinguished from a user's scenario; principal reduction is distinct from total loan payments. No affordability conclusion is inferred from cashflow, which already includes investment purchases and loan payments.
